@@ -17,3 +17,30 @@ export const contactCreate = async (
     }),
   });
 };
+
+export const contactList = async (token, { name, phone, email, page }) => {
+  const url = new URL(`${import.meta.env.VITE_API_PATH}/contacts`);
+
+  if (name) url.searchParams.append("name", name);
+  if (phone) url.searchParams.append("phone", phone);
+  if (email) url.searchParams.append("email", email);
+  if (page) url.searchParams.append("page", page);
+
+  return await fetch(url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: token,
+    },
+  });
+};
+
+export const contactDelete = async (token, id) => {
+  return await fetch(`${import.meta.env.VITE_API_PATH}/contacts/${id}`, {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      Authorization: token,
+    },
+  });
+};
