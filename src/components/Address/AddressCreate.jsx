@@ -1,13 +1,43 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useParams, useNavigate } from "react-router";
 import { useEffectOnce, useLocalStorage } from "react-use";
 import { contactDetail } from "../../lib/api/ContactApi";
-import { alertError } from "../../lib/alert";
+import { alertError, alertSuccess } from "../../lib/alert";
+import { addressCreate } from "../../lib/api/AddressApi";
 
 export default function AddressCreate() {
   const [token, _] = useLocalStorage("token", "");
   const { id } = useParams();
   const [contact, setContact] = useState({});
+  const [street, setStreet] = useState("");
+  const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
+  const [country, setCountry] = useState("");
+  const [postal_code, setPostalCode] = useState("");
+  const navigate = useNavigate();
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    const response = await addressCreate(token, id, {
+      street,
+      city,
+      province,
+      country,
+      postal_code,
+    });
+    const responseBody = await response.json();
+    console.log(responseBody);
+
+    if (response.status === 200) {
+      await alertSuccess("Address created successfully");
+      await navigate({
+        pathname: `/dashboard/contacts/${id}`,
+      });
+    } else {
+      await alertError(responseBody.errors);
+    }
+  }
 
   async function fetchContact() {
     const response = await contactDetail(token, id);
@@ -59,7 +89,7 @@ export default function AddressCreate() {
                 </div>
               </div>
             </div>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="mb-5">
                 <label
                   htmlFor="street"
@@ -78,6 +108,8 @@ export default function AddressCreate() {
                     className="w-full pl-10 pr-3 py-3 bg-gray-700 bg-opacity-50 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                     placeholder="Enter street address"
                     required
+                    value={street}
+                    onChange={(e) => setStreet(e.target.value)}
                   />
                 </div>
               </div>
@@ -100,6 +132,8 @@ export default function AddressCreate() {
                       className="w-full pl-10 pr-3 py-3 bg-gray-700 bg-opacity-50 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                       placeholder="Enter city"
                       required
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
                     />
                   </div>
                 </div>
@@ -121,6 +155,8 @@ export default function AddressCreate() {
                       className="w-full pl-10 pr-3 py-3 bg-gray-700 bg-opacity-50 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                       placeholder="Enter province or state"
                       required
+                      value={province}
+                      onChange={(e) => setProvince(e.target.value)}
                     />
                   </div>
                 </div>
@@ -144,6 +180,8 @@ export default function AddressCreate() {
                       className="w-full pl-10 pr-3 py-3 bg-gray-700 bg-opacity-50 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                       placeholder="Enter country"
                       required
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
                     />
                   </div>
                 </div>
@@ -165,6 +203,8 @@ export default function AddressCreate() {
                       className="w-full pl-10 pr-3 py-3 bg-gray-700 bg-opacity-50 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                       placeholder="Enter postal code"
                       required
+                      value={postal_code}
+                      onChange={(e) => setPostalCode(e.target.value)}
                     />
                   </div>
                 </div>
