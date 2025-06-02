@@ -1,7 +1,7 @@
 import { useEffectOnce, useLocalStorage } from "react-use";
 import { useEffect, useState } from "react";
-import { contactList } from "../../lib/api/ContactApi.js";
-import { alertError } from "../../lib/alert.js";
+import { contactList, contactDelete } from "../../lib/api/ContactApi.js";
+import { alertError, alertConfirm, alertSuccess } from "../../lib/alert.js";
 import { Link } from "react-router";
 
 export default function ContactList() {
@@ -41,6 +41,27 @@ export default function ContactList() {
     if (response.status === 200) {
       setContacts(responseBody.data);
       setTotalPage(responseBody.paging.total_page);
+    } else {
+      await alertError(responseBody.errors);
+    }
+  }
+
+  async function handleContactDelete(id) {
+    if (
+      !(await alertConfirm("Are you sure you want to delete this contact?"))
+    ) {
+      return;
+      // Jika user tidak konfirmasi, maka return; menghentikan fungsi.
+      // proses lanjut jika user konfirmasi
+    }
+
+    const response = await contactDelete(token, id);
+    const responseBody = await response.json();
+    console.log(responseBody);
+
+    if (response.status === 200) {
+      await alertSuccess("Contact deleted successfully");
+      setReload(!reload);
     } else {
       await alertError(responseBody.errors);
     }
@@ -226,8 +247,8 @@ export default function ContactList() {
               className="bg-gray-800 bg-opacity-80 rounded-xl shadow-custom border border-gray-700 overflow-hidden card-hover animate-fade-in"
             >
               <div className="p-6">
-                <a
-                  href="detail_contact.html"
+                <Link
+                  to={`/dashboard/contacts/${contact.id}`}
                   className="block cursor-pointer hover:bg-gray-700 rounded-lg transition-all duration-200 p-3"
                 >
                   <div className="flex items-center mb-3">
@@ -260,15 +281,19 @@ export default function ContactList() {
                       <span>{contact.phone}</span>
                     </p>
                   </div>
-                </a>
+                </Link>
                 <div className="mt-4 flex justify-end space-x-3">
-                  <a
-                    href="edit_contact.html"
+                  <Link
+                    to={`/dashboard/contacts/${contact.id}/edit`}
                     className="px-4 py-2 bg-gradient text-white rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-200 font-medium shadow-md flex items-center"
                   >
                     <i className="fas fa-edit mr-2" /> Edit
-                  </a>
-                  <button className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-200 font-medium shadow-md flex items-center">
+                  </Link>
+                  <button
+                    // () => agar tidak langsung menghapus kontak begitu halaman dimuat
+                    onClick={() => handleContactDelete(contact.id)}
+                    className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-200 font-medium shadow-md flex items-center"
+                  >
                     <i className="fas fa-trash-alt mr-2" /> Delete
                   </button>
                 </div>

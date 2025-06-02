@@ -9,6 +9,9 @@ import UserProfile from "./components/User/UserProfile.jsx";
 import UserLogout from "./components/User/UserLogout.jsx";
 import CreateContact from "./components/Contact/CreateContact.jsx";
 import ContactList from "./components/Contact/ContactList.jsx";
+import ContactEdit from "./components/Contact/ContactEdit.jsx";
+import ContactDetail from "./components/Contact/ContactDetail.jsx";
+import AddressCreate from "./components/Address/AddressCreate.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -28,6 +31,14 @@ createRoot(document.getElementById("root")).render(
             {/* index default halaman */}
             <Route index element={<ContactList />}></Route>
             <Route path="create" element={<CreateContact />}></Route>
+            <Route path=":id">
+              <Route index element={<ContactDetail />}></Route>
+              <Route path="edit" element={<ContactEdit />}></Route>
+              <Route path="addresses">
+                <Route path="create" element={<AddressCreate />} />
+                {/* <Route path=":addressId/edit" element={<AddressEdit />} /> */}
+              </Route>
+            </Route>
           </Route>
         </Route>
       </Routes>

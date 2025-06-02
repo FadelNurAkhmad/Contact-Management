@@ -44,3 +44,46 @@ export const contactDelete = async (token, id) => {
     },
   });
 };
+
+export const contactDetail = async (token, id) => {
+  return await fetch(`${import.meta.env.VITE_API_PATH}/contacts/${id}`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: token,
+    },
+  });
+};
+
+export const contactUpdate = async (
+  token,
+  { id, first_name, last_name, email, phone }
+) => {
+  return await fetch(`${import.meta.env.VITE_API_PATH}/contacts/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: token,
+    },
+    // digunakan untuk mengubah objek JavaScript menjadi string JSON.
+    body: JSON.stringify({
+      first_name,
+      last_name,
+      email,
+      phone,
+    }),
+  });
+};
+
+// await	Menunggu response selesai
+// return await fetch(...)	Mengembalikan response untuk diproses lanjut
+
+// fetch("/api/contacts", {
+//   method: "POST",
+//   headers: {
+//     "Content-Type": "application/json", // Kirim dalam bentuk JSON
+//     Accept: "application/json", // Minta respons dalam bentuk JSON
+//   },
+//   body: JSON.stringify({ name: "Andi" }), // Konversi object ke JSON string
+// });
