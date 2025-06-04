@@ -22,3 +22,69 @@ export const addressCreate = async (
     }
   );
 };
+
+export const addressList = async (token, id) => {
+  return await fetch(
+    `${import.meta.env.VITE_API_PATH}/contacts/${id}/addresses`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: token,
+      },
+    }
+  );
+};
+
+// Positional Parameter -> func(a, b, c) -> Simpel untuk parameter sedikit
+export const addressDetail = async (token, id, addressId) => {
+  return await fetch(
+    `${import.meta.env.VITE_API_PATH}/contacts/${id}/addresses/${addressId}`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: token,
+      },
+    }
+  );
+};
+
+// Object Destructuring Parameter -> func(a, b, { x, y }) -> Lebih jelas jika banyak parameter & opsional
+export const addressUpdate = async (
+  token,
+  id,
+  { addressId, street, city, province, country, postal_code }
+) => {
+  return await fetch(
+    `${import.meta.env.VITE_API_PATH}/contacts/${id}/addresses/${addressId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify({
+        street,
+        city,
+        province,
+        country,
+        postal_code,
+      }),
+    }
+  );
+};
+
+export const addressDelete = async (token, id, addressId) => {
+  return await fetch(
+    `${import.meta.env.VITE_API_PATH}/contacts/${id}/addresses/${addressId}`,
+    {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        Authorization: token,
+      },
+    }
+  );
+};
