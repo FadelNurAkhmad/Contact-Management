@@ -27,6 +27,7 @@ export default function DashboardLayout() {
                   </Link>
                 </li>
                 <li>
+                  {/* Link : Navigasi antar halaman tanpa reload */}
                   <Link
                     to="/dashboard/users/logout"
                     className="text-gray-100 hover:text-white flex items-center transition-colors duration-200"
